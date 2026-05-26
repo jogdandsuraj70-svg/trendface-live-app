@@ -11,7 +11,17 @@
         var redirect = sessionStorage.getItem('trendface.redirect');
         if (redirect) {
           sessionStorage.removeItem('trendface.redirect');
-          history.replaceState(null, '', redirect);
+          try {
+            var url = new URL(redirect);
+            var basePath = '/trendface-live-app';
+            var route = url.pathname.indexOf(basePath) === 0
+              ? url.pathname.slice(basePath.length)
+              : url.pathname;
+            route = route || '/';
+            history.replaceState(null, '', basePath + '/#' + route + url.search + url.hash);
+          } catch (error) {
+            history.replaceState(null, '', redirect);
+          }
         }
       })();
     </script>
