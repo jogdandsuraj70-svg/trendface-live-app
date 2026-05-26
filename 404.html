@@ -4,8 +4,14 @@
     <meta charset="utf-8" />
     <title>Trendface</title>
     <script>
-      sessionStorage.setItem('trendface.redirect', location.href);
-      location.replace('/trendface-live-app/');
+      (function () {
+        var basePath = '/trendface-live-app';
+        var route = location.pathname.indexOf(basePath) === 0
+          ? location.pathname.slice(basePath.length)
+          : location.pathname;
+        route = route || '/';
+        location.replace(basePath + '/#' + route + location.search + location.hash);
+      })();
     </script>
   </head>
   <body></body>
