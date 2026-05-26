@@ -1,0 +1,273 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300 relative">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <div class="shrink-0 flex items-center justify-between pt-2">
+    <button
+      (click)="cancel()"
+      type="button"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+    >
+      <i class="pi pi-arrow-left text-xs"></i>
+    </button>
+
+    <h1 class="text-base font-extrabold text-slate-850 dark:text-white font-sans tracking-tight">Report User</h1>
+
+    <button
+      type="button"
+      class="h-8 w-8 flex items-center justify-center rounded-full text-brand-purple hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer active-tap animate-pulse"
+    >
+      <i class="pi pi-shield text-xs"></i>
+    </button>
+  </div>
+
+  <!-- ================= PROFILE SUMMARY BUBBLE ================= -->
+  <div class="pt-5 shrink-0">
+    <div class="rounded-2xl border border-slate-150 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 flex items-center justify-between shadow-2xs relative">
+      <div class="flex items-center gap-3">
+        <!-- Avatar circular Crop -->
+        <div class="relative shrink-0">
+          <img
+            [src]="talent()?.imageUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150&h=150'"
+            class="h-12 w-12 rounded-full object-cover border border-slate-100 dark:border-slate-800 shadow-2xs"
+            alt="Sophia"
+          />
+          <span class="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-blue-500 border-2 border-white dark:border-slate-900 flex items-center justify-center">
+            <i class="pi pi-check text-[6px] text-white"></i>
+          </span>
+        </div>
+
+        <div class="flex flex-col space-y-0.5">
+          <h3 class="text-xs font-extrabold text-slate-850 dark:text-white leading-none tracking-tight">
+            {{ talent()?.name || 'Sophia Carter' }}
+          </h3>
+          <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 lowercase leading-none mt-0.5">
+            @{{ talent()?.name?.toLowerCase()?.replace(' ', '') || 'sophiac' }}
+          </span>
+          <span class="text-[7.5px] font-semibold text-amber-500 flex items-center gap-0.5 mt-1">
+            <i class="pi pi-lock text-[7px]"></i> Confidential Profile
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Role Tag badge -->
+      <span class="px-2 py-1 rounded-md bg-brand-purple/10 text-brand-purple text-[7.5px] font-extrabold uppercase tracking-widest absolute top-4 right-4">
+        {{ talent()?.role || 'Model' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ================= PRIVACY NOTICE BANNER ================= -->
+  <div class="pt-4 shrink-0">
+    <div class="rounded-2xl bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100/20 p-4 flex gap-3 shadow-2xs">
+      <i class="pi pi-info-circle text-blue-500 text-sm shrink-0 pt-0.5"></i>
+      <div class="flex flex-col space-y-1">
+        <h4 class="text-[10px] font-extrabold text-blue-950 dark:text-blue-200 leading-none">Your privacy matters</h4>
+        <p class="text-[9.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed font-body">
+          This report is anonymous. We will not share your identity with the reported user. Our safety team will review this within 24 hours.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REPORT REASONS SELECTORS ================= -->
+  <div class="pt-6 shrink-0 flex flex-col space-y-3.5">
+    <h2 class="text-[10px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5 leading-none">Reason for Reporting</h2>
+
+    <div class="space-y-3">
+      <!-- 1. Fake Profile -->
+      <div
+        (click)="selectReason('Fake Profile')"
+        [class]="selectedReason() === 'Fake Profile' ?
+          'rounded-2xl border-2 border-brand-purple bg-brand-purple/5 p-3 flex items-center justify-between cursor-pointer active-tap transition-all' :
+          'rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 flex items-center justify-between hover:border-slate-200 cursor-pointer active-tap transition-all'"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            [class]="selectedReason() === 'Fake Profile' ? 'bg-gradient-to-tr from-brand-cyan to-brand-purple text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+            class="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
+          >
+            <i class="pi pi-user-minus text-xs"></i>
+          </div>
+          <div class="flex flex-col">
+            <h4 class="text-[10.5px] font-extrabold text-slate-850 dark:text-white leading-none">Fake Profile</h4>
+            <span class="text-[8.5px] font-semibold text-slate-400 dark:text-slate-500 leading-none mt-1">Impersonating someone else or using stolen photos</span>
+          </div>
+        </div>
+        <div class="h-4.5 w-4.5 rounded-full border-2 flex items-center justify-center shrink-0" [class]="selectedReason() === 'Fake Profile' ? 'border-brand-purple' : 'border-slate-300 dark:border-slate-700'">
+          <span *ngIf="selectedReason() === 'Fake Profile'" class="h-2 w-2 rounded-full bg-brand-purple"></span>
+        </div>
+      </div>
+
+      <!-- 2. Harassment -->
+      <div
+        (click)="selectReason('Harassment')"
+        [class]="selectedReason() === 'Harassment' ?
+          'rounded-2xl border-2 border-brand-purple bg-brand-purple/5 p-3 flex items-center justify-between cursor-pointer active-tap transition-all' :
+          'rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 flex items-center justify-between hover:border-slate-200 cursor-pointer active-tap transition-all'"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            [class]="selectedReason() === 'Harassment' ? 'bg-gradient-to-tr from-brand-cyan to-brand-purple text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+            class="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
+          >
+            <i class="pi pi-exclamation-triangle text-xs"></i>
+          </div>
+          <div class="flex flex-col">
+            <h4 class="text-[10.5px] font-extrabold text-slate-850 dark:text-white leading-none">Harassment</h4>
+            <span class="text-[8.5px] font-semibold text-slate-400 dark:text-slate-500 leading-none mt-1">Bullying, hate speech, or unwanted repetitive behavior</span>
+          </div>
+        </div>
+        <div class="h-4.5 w-4.5 rounded-full border-2 flex items-center justify-center shrink-0" [class]="selectedReason() === 'Harassment' ? 'border-brand-purple' : 'border-slate-300 dark:border-slate-700'">
+          <span *ngIf="selectedReason() === 'Harassment'" class="h-2 w-2 rounded-full bg-brand-purple"></span>
+        </div>
+      </div>
+
+      <!-- 3. Spam -->
+      <div
+        (click)="selectReason('Spam')"
+        [class]="selectedReason() === 'Spam' ?
+          'rounded-2xl border-2 border-brand-purple bg-brand-purple/5 p-3 flex items-center justify-between cursor-pointer active-tap transition-all' :
+          'rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 flex items-center justify-between hover:border-slate-200 cursor-pointer active-tap transition-all'"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            [class]="selectedReason() === 'Spam' ? 'bg-gradient-to-tr from-brand-cyan to-brand-purple text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+            class="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
+          >
+            <i class="pi pi-envelope text-xs"></i>
+          </div>
+          <div class="flex flex-col">
+            <h4 class="text-[10.5px] font-extrabold text-slate-850 dark:text-white leading-none">Spam</h4>
+            <span class="text-[8.5px] font-semibold text-slate-400 dark:text-slate-500 leading-none mt-1">Unsolicited commercial messages or bot behavior</span>
+          </div>
+        </div>
+        <div class="h-4.5 w-4.5 rounded-full border-2 flex items-center justify-center shrink-0" [class]="selectedReason() === 'Spam' ? 'border-brand-purple' : 'border-slate-300 dark:border-slate-700'">
+          <span *ngIf="selectedReason() === 'Spam'" class="h-2 w-2 rounded-full bg-brand-purple"></span>
+        </div>
+      </div>
+
+      <!-- 4. Inappropriate Content -->
+      <div
+        (click)="selectReason('Inappropriate Content')"
+        [class]="selectedReason() === 'Inappropriate Content' ?
+          'rounded-2xl border-2 border-brand-purple bg-brand-purple/5 p-3 flex items-center justify-between cursor-pointer active-tap transition-all' :
+          'rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 flex items-center justify-between hover:border-slate-200 cursor-pointer active-tap transition-all'"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            [class]="selectedReason() === 'Inappropriate Content' ? 'bg-gradient-to-tr from-brand-cyan to-brand-purple text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+            class="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
+          >
+            <i class="pi pi-ban text-xs"></i>
+          </div>
+          <div class="flex flex-col">
+            <h4 class="text-[10.5px] font-extrabold text-slate-850 dark:text-white leading-none">Inappropriate Content</h4>
+            <span class="text-[8.5px] font-semibold text-slate-400 dark:text-slate-500 leading-none mt-1">Violates community guidelines with explicit material</span>
+          </div>
+        </div>
+        <div class="h-4.5 w-4.5 rounded-full border-2 flex items-center justify-center shrink-0" [class]="selectedReason() === 'Inappropriate Content' ? 'border-brand-purple' : 'border-slate-300 dark:border-slate-700'">
+          <span *ngIf="selectedReason() === 'Inappropriate Content'" class="h-2 w-2 rounded-full bg-brand-purple"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADDITIONAL DETAILS TEXTAREA ================= -->
+  <div class="pt-6 shrink-0 flex flex-col space-y-3.5 relative">
+    <div class="flex justify-between items-center pl-0.5">
+      <h2 class="text-[10px] font-extrabold tracking-wider text-brand-purple uppercase font-sans leading-none">Additional Details</h2>
+      <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 text-[7px] font-extrabold uppercase tracking-widest">Optional</span>
+    </div>
+
+    <textarea
+      [(ngModel)]="additionalDetails"
+      maxlength="500"
+      placeholder="Please provide more information to help us understand what's happening..."
+      class="w-full h-24 rounded-2xl border border-slate-150 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 p-4 text-[10px] font-semibold text-slate-850 dark:text-white placeholder-slate-350 focus:border-brand-purple focus:bg-white outline-none resize-none transition-all"
+    ></textarea>
+    
+    <!-- Character counter -->
+    <span class="absolute bottom-2.5 right-4 text-[8px] font-extrabold text-slate-400 dark:text-slate-650">
+      {{ additionalDetails().length }} / 500
+    </span>
+  </div>
+
+  <!-- ================= EVIDENCE SCREENSHOTS UPLOAD ================= -->
+  <div class="pt-6 shrink-0 flex flex-col space-y-3.5">
+    <h2 class="text-[10px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5 leading-none">Evidence (Screenshots)</h2>
+
+    <div class="flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth py-1">
+      <!-- hidden input for camera upload -->
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        #fileInput
+        class="hidden"
+        (change)="onFileSelected($event)"
+      />
+
+      <!-- Dash Dotted Upload Box -->
+      <button
+        (click)="fileInput.click()"
+        type="button"
+        class="h-14 w-14 shrink-0 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/20 dark:bg-slate-900/10 flex items-center justify-center text-slate-400 hover:border-brand-purple hover:text-brand-purple cursor-pointer active-tap transition-all"
+      >
+        <i class="pi pi-camera text-base"></i>
+      </button>
+
+      <!-- Preview Image Thumbnails list -->
+      <div
+        *ngFor="let shot of evidenceScreenshots(); let idx = index"
+        class="h-14 w-14 shrink-0 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-850 relative group shadow-2xs"
+      >
+        <img [src]="shot" class="w-full h-full object-cover" alt="Screenshot" />
+        
+        <!-- absolute overlay trash delete button -->
+        <button
+          (click)="removeScreenshot(idx)"
+          type="button"
+          class="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs transition-opacity cursor-pointer z-10"
+        >
+          <i class="pi pi-trash text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SUBMIT / CANCEL CTA BUTTONS ================= -->
+  <div class="flex-1 min-h-[30px]"></div>
+  <div class="shrink-0 flex flex-col gap-2.5 pb-6">
+    <button
+      (click)="submitReport()"
+      type="button"
+      class="w-full py-4 rounded-2xl bg-brand-cyan text-slate-800 font-extrabold text-[11px] uppercase tracking-wider shadow-lg shadow-brand-cyan/20 hover:scale-102 active:scale-98 transition-all cursor-pointer text-center active-tap"
+    >
+      Submit Report
+    </button>
+    
+    <button
+      (click)="cancel()"
+      type="button"
+      class="w-full py-4 rounded-2xl border border-brand-pink text-brand-pink font-extrabold text-[11px] uppercase tracking-wider hover:bg-brand-pink/5 cursor-pointer text-center active-tap"
+    >
+      Cancel
+    </button>
+  </div>
+
+  <!-- ================= REPORT TICKET SUCCESS OVERLAY ================= -->
+  <div
+    *ngIf="showSuccessOverlay()"
+    class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 flex flex-col items-center justify-center p-6 z-50 animate-screen-in text-center"
+  >
+    <div class="h-20 w-20 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg shadow-green-500/25 mb-5 scale-in animate-pulse">
+      <i class="pi pi-shield text-3xl"></i>
+    </div>
+    
+    <h2 class="text-base font-extrabold text-slate-850 dark:text-white leading-none tracking-tight">Report Received</h2>
+    <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-2">Unique Ticket ID: {{ generatedTicketId() }}</p>
+    <p class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 max-w-[200px] mt-2.5 leading-relaxed font-body">Our safety moderation desk is reviewing the evidence securely.</p>
+    <span class="text-[9px] font-bold text-brand-purple uppercase tracking-widest mt-6 animate-pulse block">Redirecting to Dashboard...</span>
+  </div>
+
+</div>

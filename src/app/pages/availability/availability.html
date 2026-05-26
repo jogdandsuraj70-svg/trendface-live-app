@@ -1,0 +1,174 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col justify-between p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2">
+    <button
+      (click)="back()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer active-tap">
+      <i class="pi pi-arrow-left text-sm"></i>
+    </button>
+    <span class="text-lg font-extrabold text-slate-850 dark:text-white font-sans">Availability</span>
+    <div class="w-8"></div> <!-- Spacer -->
+  </div>
+
+  <!-- ================= MID SECTION: AVAILABILITY CONTENT ================= -->
+  <div class="my-auto py-5 space-y-6 flex-1 flex flex-col justify-center">
+    
+    <!-- Title and Subtitle -->
+    <div class="space-y-1 pl-0.5">
+      <h2 class="text-2xl font-extrabold text-slate-850 dark:text-white tracking-tight font-sans">Set Your Availability</h2>
+      <p class="text-[11px] text-slate-405 dark:text-slate-500 leading-relaxed font-body max-w-[280px]">
+        Let others know when you're available to collaborate.
+      </p>
+    </div>
+
+    <!-- Availability Type Section -->
+    <div class="space-y-2">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">Availability Type</label>
+      
+      <div class="space-y-2.5">
+        <button
+          *ngFor="let type of availabilityTypes()"
+          (click)="selectType(type)"
+          type="button"
+          [class]="selectedType() === type ? 
+            'w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-brand-cyan text-brand-dark font-bold text-xs transition-all duration-300 border border-transparent scale-[1.02] shadow-sm shadow-brand-cyan/15 cursor-pointer' : 
+            'w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 text-slate-750 dark:text-slate-300 font-semibold text-xs transition-all duration-300 hover:bg-slate-50 cursor-pointer'"
+        >
+          <span>{{ type }}</span>
+          
+          <!-- Radio Status indicator icon -->
+          <span *ngIf="selectedType() === type" class="h-5 w-5 rounded-full bg-brand-purple text-white flex items-center justify-center border-0">
+            <i class="pi pi-check text-[9px] font-bold"></i>
+          </span>
+          <span *ngIf="selectedType() !== type" class="h-5 w-5 rounded-full border-2 border-slate-200 dark:border-slate-750"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Weekly Schedule Section -->
+    <div class="space-y-2.5">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">Weekly Schedule</label>
+      
+      <div class="flex justify-between items-center pt-0.5">
+        <button
+          *ngFor="let day of daysOfWeek(); let i = index"
+          (click)="toggleDay(i)"
+          type="button"
+          [class]="day.active ? 
+            'h-10 w-10 rounded-full bg-brand-purple text-white font-bold text-[11px] flex items-center justify-center transition-all duration-300 scale-[1.05] shadow-sm shadow-brand-purple/15 cursor-pointer active-tap' : 
+            'h-10 w-10 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-150 dark:border-slate-800 text-slate-650 dark:text-slate-400 font-semibold text-[11px] flex items-center justify-center transition-all duration-300 hover:bg-slate-100 cursor-pointer active-tap'"
+        >
+          {{ day.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Time Slots Section -->
+    <div class="space-y-2.5">
+      <div class="flex justify-between items-center pl-0.5">
+        <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans">Time Slots</label>
+        <button
+          type="button"
+          (click)="addSlot()"
+          class="text-[9.5px] font-extrabold tracking-wider text-brand-purple hover:text-brand-cyan uppercase font-sans flex items-center gap-1 cursor-pointer active-tap"
+        >
+          + Add Slot
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div 
+          *ngFor="let slot of timeSlots(); let i = index" 
+          class="relative w-full rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-4.5 flex items-center justify-between transition-colors shadow-sm"
+        >
+          <!-- Start Time interactive label column -->
+          <div class="flex-1 flex flex-col items-center justify-center relative cursor-pointer group">
+            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Start Time</span>
+            <span class="text-sm font-extrabold text-brand-purple group-hover:text-brand-cyan transition-colors">
+              {{ formatTimeDisplay(slot.start) }}
+            </span>
+            <input
+              type="time"
+              [value]="slot.start"
+              (change)="updateTime(i, 'start', $any($event.target).value)"
+              class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+            />
+          </div>
+
+          <!-- Vertical dividing border line -->
+          <div class="h-8 w-px bg-slate-100 dark:bg-slate-800"></div>
+
+          <!-- End Time interactive label column -->
+          <div class="flex-1 flex flex-col items-center justify-center relative cursor-pointer group">
+            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">End Time</span>
+            <span class="text-sm font-extrabold text-brand-purple group-hover:text-brand-cyan transition-colors">
+              {{ formatTimeDisplay(slot.end) }}
+            </span>
+            <input
+              type="time"
+              [value]="slot.end"
+              (change)="updateTime(i, 'end', $any($event.target).value)"
+              class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+            />
+          </div>
+
+          <!-- Remove Slot button (if multiple slots) -->
+          <button
+            *ngIf="timeSlots().length > 1"
+            (click)="removeSlot(i)"
+            type="button"
+            class="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-100 hover:bg-red-200 text-red-650 flex items-center justify-center cursor-pointer transition-colors shadow-sm active-tap"
+          >
+            <i class="pi pi-times text-[8px] font-bold"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collaboration Mode Section -->
+    <div class="space-y-2.5">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">Collaboration Mode</label>
+      
+      <!-- Selection slider toggle -->
+      <div class="w-full p-1 bg-slate-50 dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-2xl flex items-center justify-between">
+        <!-- Remote option -->
+        <button
+          type="button"
+          (click)="collaborationMode.set('Remote')"
+          [class]="collaborationMode() === 'Remote' ? 
+            'flex-1 py-3 rounded-xl bg-brand-cyan text-brand-dark font-extrabold text-[11px] uppercase tracking-wider transition-all duration-300 scale-[1.02] shadow-sm cursor-pointer' : 
+            'flex-1 py-3 bg-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-350 font-bold text-[11px] uppercase tracking-wider transition-all cursor-pointer'"
+        >
+          Remote
+        </button>
+
+        <!-- In-Person option -->
+        <button
+          type="button"
+          (click)="collaborationMode.set('In-Person')"
+          [class]="collaborationMode() === 'In-Person' ? 
+            'flex-1 py-3 rounded-xl bg-brand-cyan text-brand-dark font-extrabold text-[11px] uppercase tracking-wider transition-all duration-300 scale-[1.02] shadow-sm cursor-pointer' : 
+            'flex-1 py-3 bg-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-350 font-bold text-[11px] uppercase tracking-wider transition-all cursor-pointer'"
+        >
+          In-Person
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= BOTTOM SECTION: ACTION ================= -->
+  <div class="w-full pt-4 pb-2">
+    <!-- Save & Continue primary CTA button -->
+    <button
+      (click)="saveAndContinue()"
+      [disabled]="isLoading()"
+      class="w-full py-4.5 rounded-2xl bg-brand-cyan hover:bg-opacity-92 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-cyan/15 transition-all active-tap cursor-pointer flex items-center justify-center gap-1.5"
+    >
+      <span *ngIf="!isLoading()">SAVE & CONTINUE</span>
+      <span *ngIf="isLoading()" class="flex items-center gap-1.5"><i class="pi pi-spin pi-spinner text-xs"></i> Saving Availability...</span>
+    </button>
+  </div>
+
+</div>

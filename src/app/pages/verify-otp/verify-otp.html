@@ -1,0 +1,92 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col justify-between p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2">
+    <button
+      (click)="back()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer active-tap">
+      <i class="pi pi-arrow-left text-sm"></i>
+    </button>
+    <span class="text-xs font-extrabold text-slate-450 dark:text-slate-500 font-sans tracking-[0.2em] uppercase">Verification</span>
+    <div class="w-8"></div> <!-- Spacer -->
+  </div>
+
+  <!-- ================= MID SECTION: OTP CONTROLS ================= -->
+  <div class="my-auto py-4 space-y-6 flex-1 flex flex-col justify-center">
+    
+    <!-- Intro headers -->
+    <div class="space-y-1.5 text-center">
+      <h2 class="text-2xl font-extrabold text-slate-850 dark:text-white tracking-tight font-sans">Verify Your Email</h2>
+      <p class="text-[11px] text-slate-405 dark:text-slate-500 leading-relaxed font-body max-w-[300px] mx-auto">
+        We've sent a 6-digit code to <span class="font-bold text-slate-700 dark:text-slate-300">{{ pendingEmail() }}</span>. Enter it below to continue.
+      </p>
+    </div>
+
+    <!-- Error message alert -->
+    <div *ngIf="errorMessage()" class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-650 text-[10px] font-bold text-center font-sans tracking-wide">
+      <i class="pi pi-exclamation-circle mr-1"></i> {{ errorMessage() }}
+    </div>
+
+    <!-- OTP Input Box Grid -->
+    <div class="flex justify-between items-center gap-1.5 max-w-[320px] mx-auto w-full">
+      <input
+        *ngFor="let digit of [0,1,2,3,4,5]; let i = index"
+        [id]="'otp-input-' + i"
+        type="text"
+        maxLength="1"
+        pattern="[0-9]*"
+        inputmode="numeric"
+        (keyup)="onDigitInput($event, i)"
+        (keydown)="onDigitBackspace($event, i)"
+        class="w-11 h-11 rounded-full border text-center font-sans font-bold text-base outline-none transition-all duration-300"
+        [ngClass]="getOtpBoxClass(i)"
+      />
+    </div>
+
+    <!-- Mid secure card overlay -->
+    <div class="relative w-full max-w-[310px] mx-auto aspect-[16/9] rounded-2xl overflow-hidden shadow-md shrink-0 border border-slate-100 dark:border-slate-800">
+      <img
+        src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=600&h=400"
+        class="w-full h-full object-cover filter brightness-90 dark:brightness-75"
+        alt="Secure Casting Frame"
+      />
+      <!-- Soft gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      
+      <!-- Secure Session badge -->
+      <div class="absolute bottom-3 left-4 right-4 flex flex-col gap-0.5">
+        <span class="text-[7.5px] font-extrabold tracking-[0.2em] text-white/50 uppercase font-sans">Secure Session ID</span>
+        <span class="text-[9.5px] font-bold tracking-[0.1em] text-brand-cyan uppercase font-sans">TF-902-WKUP-SEC</span>
+      </div>
+    </div>
+
+    <!-- Submit Action Button -->
+    <button
+      (click)="verifyCode()"
+      [disabled]="isLoading()"
+      class="w-full py-4.5 rounded-2xl bg-brand-cyan hover:bg-opacity-92 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-cyan/15 transition-all active-tap cursor-pointer flex items-center justify-center gap-1.5">
+      <span *ngIf="!isLoading()">Verify & Continue</span>
+      <span *ngIf="isLoading()" class="flex items-center gap-1.5"><i class="pi pi-spin pi-spinner text-xs"></i> Verifying...</span>
+    </button>
+
+  </div>
+
+  <!-- ================= BOTTOM SECTION: RESEND ACTIONS ================= -->
+  <div class="text-center pb-2 pt-4 space-y-2">
+    <p class="text-[8.5px] font-bold text-slate-400 dark:text-slate-500 font-sans tracking-[0.15em] uppercase">Didn't Receive the Code?</p>
+    <div>
+      <button
+        *ngIf="resendTimer() === 0"
+        (click)="resendCode()"
+        class="text-[10px] font-bold text-brand-purple hover:underline cursor-pointer">
+        Resend OTP Code
+      </button>
+      <span
+        *ngIf="resendTimer() > 0"
+        class="text-[10px] font-semibold text-slate-405 dark:text-slate-500 font-body">
+        Resend in 00:{{ resendTimer() < 10 ? '0' + resendTimer() : resendTimer() }}
+      </span>
+    </div>
+  </div>
+
+</div>

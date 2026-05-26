@@ -1,0 +1,116 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col justify-between p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2">
+    <button
+      (click)="back()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer active-tap">
+      <i class="pi pi-arrow-left text-sm"></i>
+    </button>
+    <span class="text-lg font-extrabold text-slate-850 dark:text-white font-sans">Trendface</span>
+    <div class="w-8"></div> <!-- Spacer -->
+  </div>
+
+  <!-- ================= PROGRESS TRACK BAR ================= -->
+  <div class="w-full pt-4 space-y-1.5 px-0.5">
+    <div class="flex justify-between items-center text-[9px] font-extrabold tracking-wider text-brand-purple uppercase font-sans">
+      <span>Step 3 of 3</span>
+      <span>100% Complete</span>
+    </div>
+    <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div class="h-full w-full bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink rounded-full animate-pulse"></div>
+    </div>
+  </div>
+
+  <!-- ================= MID SECTION: PORTFOLIO LOADER ================= -->
+  <div class="my-auto py-5 space-y-5 flex-1 flex flex-col justify-center">
+    
+    <!-- Title and Subtitle -->
+    <div class="space-y-1 pl-0.5">
+      <h2 class="text-2xl font-extrabold text-slate-850 dark:text-white tracking-tight font-sans">Upload Your Portfolio</h2>
+      <p class="text-[11px] text-slate-405 dark:text-slate-500 leading-relaxed font-body max-w-[280px]">
+        Define your professional footprint in the digital atelier.
+      </p>
+    </div>
+
+    <!-- Hidden file input for file selection -->
+    <input
+      #mediaInput
+      type="file"
+      multiple
+      accept="image/png, image/jpeg, image/webp"
+      (change)="onMediaSelected($event)"
+      class="hidden"
+    />
+
+    <!-- Media Grid (Pre-populated matching Figma design) -->
+    <div class="grid grid-cols-2 gap-3.5 pt-2">
+      
+      <!-- ADD Media Action Card -->
+      <button
+        type="button"
+        (click)="triggerMediaUpload(mediaInput)"
+        [disabled]="images().length >= 5"
+        class="aspect-[4/5] rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-brand-purple bg-slate-50/50 dark:bg-slate-900/40 flex flex-col items-center justify-center gap-2 transition-all duration-300 active-tap cursor-pointer disabled:opacity-40 disabled:pointer-events-none">
+        <span class="h-8 w-8 rounded-full bg-brand-purple/10 text-brand-purple flex items-center justify-center">
+          <i class="pi pi-plus text-xs"></i>
+        </span>
+        <span class="text-[10px] font-extrabold tracking-wider text-slate-450 dark:text-slate-500 uppercase font-sans">
+          ADD Media
+        </span>
+      </button>
+
+      <!-- Pre-uploaded and Custom image cards -->
+      <div
+        *ngFor="let img of images(); let i = index"
+        class="relative aspect-[4/5] rounded-2xl overflow-hidden group shadow-sm border border-slate-100 dark:border-slate-850/30 animate-screen-in">
+        
+        <img
+          [src]="img"
+          class="w-full h-full object-cover"
+          alt="Portfolio Item"
+        />
+
+        <!-- Delete overlay indicator -->
+        <button
+          type="button"
+          (click)="removeImage(i)"
+          class="absolute top-2.5 right-2.5 h-6.5 w-6.5 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center cursor-pointer transition-colors z-20 active-tap">
+          <i class="pi pi-times text-[9px]"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Quality over quantity Engagement Tip card (Figma design specs) -->
+    <div *ngIf="images().length < 5" class="p-4 bg-rose-50/80 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/40 rounded-2xl flex items-start gap-3 transition-all duration-300">
+      <span class="h-5 w-5 rounded-full bg-brand-pink/10 text-brand-pink flex items-center justify-center shrink-0 mt-0.5">
+        <i class="pi pi-check text-[9px] font-bold"></i>
+      </span>
+      <p class="text-[10px] leading-relaxed text-slate-650 dark:text-slate-400 font-body pr-1.5">
+        <span class="font-bold text-slate-800 dark:text-white font-sans mr-0.5">Tip:</span> Quality over quantity. Profiles with at least 5 professional photos see 40% more engagement.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================= BOTTOM SECTION: ACTIONS ================= -->
+  <div class="w-full flex flex-col items-center gap-4.5 pb-2">
+    <!-- Primary CTA button -->
+    <button
+      (click)="confirm()"
+      [disabled]="isLoading()"
+      class="w-full py-4.5 rounded-2xl bg-brand-cyan hover:bg-opacity-92 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-cyan/15 transition-all active-tap cursor-pointer flex items-center justify-center gap-1.5">
+      <span *ngIf="!isLoading()">Continue →</span>
+      <span *ngIf="isLoading()" class="flex items-center gap-1.5"><i class="pi pi-spin pi-spinner text-xs"></i> Saving Atelier...</span>
+    </button>
+
+    <!-- Secondary Skip for now trigger -->
+    <button
+      (click)="skip()"
+      class="text-[10px] font-extrabold tracking-widest text-slate-450 hover:text-brand-purple uppercase font-sans transition-colors cursor-pointer select-none active-tap py-1">
+      Skip For Now
+    </button>
+  </div>
+
+</div>

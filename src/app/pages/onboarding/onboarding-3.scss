@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.text-gradient {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

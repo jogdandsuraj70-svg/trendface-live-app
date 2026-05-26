@@ -1,0 +1,227 @@
+<div class="h-full w-full bg-slate-50 dark:bg-slate-950 flex flex-col select-none relative overflow-hidden transition-colors duration-300">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <div class="shrink-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-850 p-6 flex items-center justify-between z-20 shadow-xs">
+    <div class="flex items-center gap-3">
+      <button
+        (click)="back()"
+        type="button"
+        class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+      >
+        <i class="pi pi-arrow-left text-xs"></i>
+      </button>
+
+      <!-- User metadata info -->
+      <div (click)="viewProfile()" class="flex flex-col cursor-pointer">
+        <h2 class="text-xs font-extrabold text-slate-850 dark:text-white leading-none tracking-tight">
+          {{ conversation()?.name }}
+        </h2>
+        <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
+          {{ conversation()?.role }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2">
+      <!-- Report Button -->
+      <button
+        (click)="reportUser()"
+        type="button"
+        class="h-8 w-8 flex items-center justify-center rounded-full text-slate-400 hover:text-brand-pink hover:bg-brand-pink/5 cursor-pointer active-tap"
+        title="Report User"
+      >
+        <i class="pi pi-shield text-xs"></i>
+      </button>
+
+      <!-- Profile Avatar -->
+      <div (click)="viewProfile()" class="h-9 w-9 rounded-full p-0.5 bg-gradient-to-tr from-brand-cyan to-brand-purple cursor-pointer active-tap">
+        <img
+          [src]="conversation()?.avatarUrl"
+          class="h-full w-full rounded-full object-cover border border-white dark:border-slate-900"
+          alt="Avatar"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHAT MESSAGE FEED ================= -->
+  <div
+    #chatFeed
+    class="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar scroll-smooth"
+  >
+    <div
+      *ngFor="let msg of conversation()?.messages"
+      [class]="msg.senderId === 'me' ? 'flex justify-end' : 'flex justify-start'"
+      class="animate-screen-in"
+    >
+      <div class="max-w-[75%] flex flex-col space-y-1">
+        
+        <!-- Standard text bubble -->
+        <div
+          *ngIf="!msg.isBookingCard"
+          [class]="msg.senderId === 'me' ?
+            'bg-brand-purple text-white rounded-2xl rounded-tr-xs px-4 py-2.5 text-[11px] font-semibold shadow-xs' :
+            'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-2.5 text-[11px] font-semibold border border-slate-100 dark:border-slate-850 shadow-2xs'"
+        >
+          <!-- Text message content -->
+          <p>{{ msg.text }}</p>
+
+          <!-- Embedded Media message -->
+          <div *ngIf="msg.mediaUrl" class="mt-2.5 rounded-xl overflow-hidden aspect-[4/3] border border-white/10 shadow-xs">
+            <img [src]="msg.mediaUrl" class="w-full h-full object-cover" alt="Media" />
+          </div>
+        </div>
+
+        <!-- Dynamic interactive Booking Request card -->
+        <div
+          *ngIf="msg.isBookingCard && msg.bookingDetails"
+          class="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-850 rounded-2xl p-4 flex flex-col gap-3 shadow-md shadow-slate-100/5 max-w-[270px]"
+        >
+          <div class="flex items-center gap-2.5 border-b border-slate-100 dark:border-slate-850 pb-2.5">
+            <div class="h-7 w-7 rounded-lg bg-brand-purple/10 text-brand-purple flex items-center justify-center shrink-0">
+              <i class="pi pi-calendar-plus text-xs"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[9px] font-extrabold text-brand-purple uppercase tracking-widest">Booking Request</span>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 leading-none mt-0.5">Awaiting Confirmation</span>
+            </div>
+          </div>
+
+          <!-- Event description -->
+          <div class="space-y-1.5 text-[10px] font-semibold text-slate-600 dark:text-slate-400">
+            <div class="flex justify-between">
+              <span>Date:</span>
+              <span class="font-extrabold text-slate-800 dark:text-white">{{ msg.bookingDetails.date }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Time Slot:</span>
+              <span class="font-extrabold text-slate-800 dark:text-white">{{ msg.bookingDetails.time }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Status:</span>
+              <span
+                [class]="msg.bookingDetails.status === 'accepted' ? 'text-green-500' :
+                         msg.bookingDetails.status === 'declined' ? 'text-brand-pink' : 'text-amber-500'"
+                class="font-extrabold capitalize"
+              >
+                {{ msg.bookingDetails.status }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Pending booking CTA actions -->
+          <div
+            *ngIf="msg.bookingDetails.status === 'pending' && msg.senderId !== 'me'"
+            class="flex items-center gap-2 border-t border-slate-100 dark:border-slate-850 pt-2.5 shrink-0"
+          >
+            <button
+              (click)="acceptBooking(msg.id)"
+              type="button"
+              class="flex-1 py-2 rounded-xl bg-brand-cyan text-slate-800 font-extrabold text-[9px] uppercase tracking-wider text-center cursor-pointer active-tap"
+            >
+              Accept
+            </button>
+            <button
+              (click)="declineBooking(msg.id)"
+              type="button"
+              class="flex-1 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold text-[9px] uppercase tracking-wider text-center cursor-pointer active-tap"
+            >
+              Decline
+            </button>
+          </div>
+
+          <div
+            *ngIf="msg.bookingDetails.status === 'accepted'"
+            class="rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 py-2 px-3 flex items-center justify-center gap-1.5 text-green-500 text-[9px] font-extrabold uppercase tracking-wider"
+          >
+            <i class="pi pi-check-circle text-[10px]"></i> Booking Confirmed
+          </div>
+
+          <div
+            *ngIf="msg.bookingDetails.status === 'declined'"
+            class="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 py-2 px-3 flex items-center justify-center gap-1.5 text-brand-pink text-[9px] font-extrabold uppercase tracking-wider"
+          >
+            <i class="pi pi-times-circle text-[10px]"></i> Booking Declined
+          </div>
+        </div>
+
+        <span class="text-[7.5px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight" [class]="msg.senderId === 'me' ? 'text-right' : 'text-left'">
+          {{ msg.timestamp | date:'shortTime' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Simulated Typing Bubble -->
+    <div *ngIf="conversation()?.typing" class="flex justify-start animate-pulse">
+      <div class="max-w-[75%] bg-white dark:bg-slate-900 text-brand-purple border border-slate-100 dark:border-slate-850 rounded-2xl rounded-tl-xs px-4 py-2.5 flex items-center gap-1">
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-purple animate-bounce" style="animation-delay: 0s"></span>
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-purple animate-bounce" style="animation-delay: 0.15s"></span>
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-purple animate-bounce" style="animation-delay: 0.3s"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FLOATING ATTACHMENT OPTION MENU ================= -->
+  <div
+    *ngIf="showAttachMenu()"
+    class="absolute bottom-20 left-6 right-6 bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-4 shadow-xl z-30 animate-screen-in"
+  >
+    <h4 class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 pl-1">Attachment Options</h4>
+    
+    <div class="grid grid-cols-2 gap-3">
+      <button
+        (click)="attachBookingRequest()"
+        type="button"
+        class="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-brand-purple/5 border border-brand-purple/15 text-brand-purple hover:bg-brand-purple/10 active-tap cursor-pointer transition-all"
+      >
+        <i class="pi pi-calendar text-base mb-1.5"></i>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider">Book Creative</span>
+      </button>
+
+      <button
+        (click)="attachImage()"
+        type="button"
+        class="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-brand-cyan/5 border border-brand-cyan/15 text-slate-850 dark:text-brand-cyan hover:bg-brand-cyan/10 active-tap cursor-pointer transition-all"
+      >
+        <i class="pi pi-image text-base mb-1.5"></i>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider">Attach Photo</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM INPUT PANEL ================= -->
+  <div class="shrink-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-850 p-4 flex items-center gap-3 z-20 shadow-lg pb-6">
+    <!-- Attach + CTA Toggle -->
+    <button
+      (click)="toggleAttachMenu()"
+      type="button"
+      [class]="showAttachMenu() ? 'bg-slate-200 dark:bg-slate-800 rotate-45 text-slate-650' : 'bg-slate-100 dark:bg-slate-800 text-slate-650 dark:text-slate-350'"
+      class="h-9 w-9 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer active-tap shrink-0"
+    >
+      <i class="pi pi-plus text-xs"></i>
+    </button>
+
+    <!-- Custom Chat Input Field -->
+    <div class="flex-1 relative flex items-center">
+      <input
+        type="text"
+        [ngModel]="newMessageText()"
+        (ngModelChange)="newMessageText.set($event)"
+        (keyup.enter)="sendMessage()"
+        placeholder="Type a message..."
+        class="w-full pl-4 pr-12 py-3 rounded-2xl border border-slate-150 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-[11px] font-semibold text-slate-850 dark:text-white placeholder-slate-350 focus:border-brand-purple focus:bg-white transition-all outline-none"
+      />
+
+      <!-- Circular Send button inside input -->
+      <button
+        (click)="sendMessage()"
+        type="button"
+        class="absolute right-1.5 h-8 w-8 rounded-full bg-gradient-to-tr from-brand-cyan to-brand-purple text-white flex items-center justify-center shadow-sm shadow-brand-purple/20 hover:scale-105 transition-all cursor-pointer active-tap"
+      >
+        <i class="pi pi-send text-[9px] translate-x-px"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,82 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col justify-between p-6 animate-screen-in select-none transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2">
+    <span class="text-lg font-extrabold text-slate-850 dark:text-white font-sans">Trendface</span>
+    <button
+      (click)="close()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-pointer transition-colors active-tap">
+      <i class="pi pi-times text-sm"></i>
+    </button>
+  </div>
+
+  <!-- ================= CENTER WORK: PORTFOLIO CARD ================= -->
+  <div class="my-auto py-4 flex flex-col items-center">
+    <!-- Mock artwork card -->
+    <div class="w-full max-w-[310px] aspect-square rounded-[30px] border border-slate-100 dark:border-slate-800/40 bg-white dark:bg-slate-900 shadow-lg shadow-slate-100/50 dark:shadow-none flex flex-col items-center justify-center p-6 transition-all duration-300">
+      
+      <div class="space-y-4 text-center">
+        <!-- Stylized script cursive text using Outfit/italic -->
+        <div class="space-y-0.5">
+          <h3 class="text-4xl font-extrabold font-sans italic text-gradient bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink leading-none tracking-tight">Build</h3>
+          <h3 class="text-4xl font-extrabold font-sans italic text-gradient bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink leading-none tracking-tight">Your</h3>
+          <h3 class="text-4xl font-extrabold font-sans italic text-gradient bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink leading-none tracking-tight">Portfolio</h3>
+        </div>
+        
+        <!-- Spaced sub-labels -->
+        <div class="pt-4 space-y-1">
+          <p class="text-xs font-extrabold tracking-[0.18em] text-slate-800 dark:text-slate-200 uppercase font-sans">Build Your</p>
+          <p class="text-[9px] font-bold tracking-[0.15em] text-slate-400 dark:text-slate-500 uppercase font-sans">Safe For Work</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM SECTION: BRAND TEXT & CTAS ================= -->
+  <div class="space-y-7 pb-4">
+    
+    <!-- Heading group -->
+    <div class="text-center space-y-3">
+      <h2 class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight font-sans">
+        Build Your Portfolio
+      </h2>
+      <p class="text-xs text-slate-405 dark:text-slate-500 font-body leading-relaxed max-w-[280px] mx-auto">
+        Showcase your work, grow your network, and unlock new opportunities.
+      </p>
+    </div>
+
+    <!-- Dots Pagination -->
+    <div class="flex items-center justify-center gap-2">
+      <!-- Inactive Dots -->
+      <span class="h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-800"></span>
+      <span class="h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-800"></span>
+      <!-- Active Dot (Gradient cyan/pink pill) -->
+      <span class="h-2 w-6.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-pink shadow-sm shadow-brand-cyan/20"></span>
+    </div>
+
+    <!-- Action CTAs (Get Started & Sign In) -->
+    <div class="w-full flex flex-col items-center gap-6.5">
+      <!-- Get Started Gradient-Border Button -->
+      <button
+        (click)="getStarted()"
+        class="relative w-full p-[1.8px] rounded-2xl bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink transition-all active-tap cursor-pointer shadow-md shadow-brand-purple/5">
+        <span class="block w-full py-4.5 rounded-[14px] bg-white dark:bg-slate-900 text-center font-bold text-sm tracking-wide transition-colors">
+          <span class="bg-gradient-to-r from-brand-cyan to-brand-pink bg-clip-text text-transparent font-sans">
+            Get Started
+          </span>
+        </span>
+      </button>
+
+      <!-- Sign In anchor with cyan dot -->
+      <button
+        (click)="signIn()"
+        class="flex items-center gap-2 text-xs font-extrabold tracking-wider text-slate-850 dark:text-slate-200 hover:text-brand-cyan transition-colors active-tap cursor-pointer uppercase font-sans">
+        <span class="h-2 w-2 rounded-full bg-brand-cyan animate-pulse"></span>
+        <span>SIGN IN</span>
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,243 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2 shrink-0">
+    <!-- User circular Avatar and Welcome greet -->
+    <div (click)="openProfile()" class="flex items-center gap-3 cursor-pointer group">
+      <div class="h-10 w-10 rounded-full p-0.5 bg-gradient-to-tr from-brand-cyan to-brand-purple group-hover:scale-105 transition-transform">
+        <img
+          [src]="profileImage()"
+          class="h-full w-full rounded-full object-cover border-2 border-white dark:border-slate-900"
+          alt="User Profile"
+        />
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-sans">WELCOME BACK</span>
+        <span class="text-xs font-extrabold text-slate-850 dark:text-white flex items-center gap-1 font-sans">
+          Hello, {{ username() }} 👋
+        </span>
+      </div>
+    </div>
+
+    <!-- Header Icons actions -->
+    <div class="flex items-center gap-1.5">
+      <!-- Chat icon button -->
+      <button
+        (click)="openMessages()"
+        type="button"
+        class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap animate-pulse"
+      >
+        <i class="pi pi-comments text-xs"></i>
+      </button>
+
+      <!-- Notification icon button with badge -->
+      <button
+        (click)="triggerNotifications()"
+        type="button"
+        class="relative h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+      >
+        <i class="pi pi-bell text-xs"></i>
+        <!-- Tiny red notification dot -->
+        <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-brand-pink border border-white dark:border-slate-900"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= SEARCH AND FILTER SECTION ================= -->
+  <div class="pt-5 shrink-0 flex items-center gap-2.5">
+    <!-- Rounded search bar -->
+    <div (click)="openSearch()" class="flex-1 relative flex items-center cursor-pointer">
+      <span class="absolute left-4 text-slate-400"><i class="pi pi-search text-xs"></i></span>
+      <input
+        type="text"
+        readonly
+        placeholder="Search artists, models, shoots..."
+        class="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-150 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-[11px] font-semibold text-slate-850 dark:text-white placeholder-slate-350 focus:border-brand-cyan focus:bg-white transition-all outline-none cursor-pointer"
+      />
+    </div>
+
+    <!-- Premium slider filter button -->
+    <button
+      (click)="openFilters()"
+      type="button"
+      class="h-10 w-10 rounded-2xl bg-brand-purple/10 border border-brand-purple/15 text-brand-purple flex items-center justify-center cursor-pointer active-tap"
+    >
+      <i class="pi pi-sliders-h text-xs"></i>
+    </button>
+  </div>
+
+  <!-- ================= HORIZONTAL CATEGORIES TABS ================= -->
+  <div class="pt-4 shrink-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+    <button
+      *ngFor="let cat of categories()"
+      (click)="selectCategory(cat)"
+      type="button"
+      [class]="selectedCategory() === cat ?
+        'px-4.5 py-2.5 rounded-full bg-brand-purple text-white font-extrabold text-[10px] tracking-wide shadow-sm shadow-brand-purple/15 transition-all cursor-pointer whitespace-nowrap' :
+        'px-4.5 py-2.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-150 dark:border-slate-800 text-slate-650 dark:text-slate-400 font-bold text-[10px] tracking-wide transition-all hover:bg-slate-100 cursor-pointer whitespace-nowrap'"
+    >
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- ================= MAIN CONTENT SCROLL AREA ================= -->
+  <div class="flex-1 py-5 space-y-6">
+
+    <!-- 1. FEATURED TALENT SECTION -->
+    <div class="space-y-3.5">
+      <div class="flex justify-between items-center pl-0.5">
+        <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans">Featured Talent</label>
+        <button 
+          (click)="viewAllFeatured()" 
+          class="text-[9.5px] font-extrabold tracking-wider text-brand-purple hover:text-brand-cyan uppercase font-sans cursor-pointer active-tap"
+        >
+          VIEW ALL
+        </button>
+      </div>
+
+      <!-- SKELETON LOADER STATE (Satisfies skeletal loading animations) -->
+      <div *ngIf="isLoading()" class="grid grid-cols-2 gap-3.5">
+        <div *ngFor="let item of [1, 2]" class="rounded-2xl border border-slate-100 dark:border-slate-850 p-3 space-y-3 animate-pulse bg-slate-50/50 dark:bg-slate-900/30">
+          <div class="aspect-[4/5] rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+          <div class="space-y-1.5 px-0.5">
+            <div class="h-3 w-3/4 rounded bg-slate-200 dark:bg-slate-800"></div>
+            <div class="h-2 w-1/2 rounded bg-slate-200 dark:bg-slate-800"></div>
+          </div>
+          <div class="h-8 rounded-xl bg-slate-200 dark:bg-slate-800 w-full"></div>
+        </div>
+      </div>
+
+      <!-- Dynamic Talent Cards list -->
+      <div *ngIf="!isLoading()" class="grid grid-cols-2 gap-3.5">
+        <div
+          *ngFor="let talent of featuredTalents()"
+          (click)="openTalentProfile(talent.id)"
+          class="rounded-2xl border border-slate-150 dark:border-slate-800 p-3 flex flex-col justify-between bg-white dark:bg-slate-900 shadow-sm relative group animate-screen-in cursor-pointer"
+        >
+          <!-- Photo box carrying ratings overlay -->
+          <div class="relative aspect-[4/5] rounded-xl overflow-hidden mb-3">
+            <img
+              [src]="talent.imageUrl"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              [alt]="talent.name"
+            />
+            <!-- Star rating overlay badge -->
+            <span class="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-xs text-white text-[8.5px] font-bold flex items-center gap-0.5">
+              <i class="pi pi-star-fill text-[8px] text-amber-400"></i> {{ talent.rating }}
+            </span>
+          </div>
+
+          <!-- Name and Role indicators -->
+          <div class="space-y-0.5 px-0.5 mb-3.5">
+            <h3 class="text-xs font-extrabold text-slate-850 dark:text-white tracking-tight leading-none">{{ talent.name }}</h3>
+            <p class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 font-body leading-none">{{ talent.profession }}</p>
+          </div>
+
+          <!-- Stateful connection action trigger with smooth animations -->
+          <button
+            (click)="sendConnectRequest(talent.id, $event)"
+            type="button"
+            [class]="getConnectButtonClass(talent.connectState)"
+          >
+            <span *ngIf="talent.connectState === 'Connect'">Connect</span>
+            <span *ngIf="talent.connectState === 'Requested'" class="flex items-center justify-center gap-1">
+              <i class="pi pi-spin pi-spinner text-[8px]"></i> Requested
+            </span>
+            <span *ngIf="talent.connectState === 'Connected'" class="flex items-center justify-center gap-1">
+              <i class="pi pi-check text-[8px]"></i> Connected
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. TRENDING PROJECTS SECTION -->
+    <div class="space-y-3.5">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">Trending Projects</label>
+
+      <!-- SKELETON LOADER -->
+      <div *ngIf="isLoading()" class="w-full rounded-2xl aspect-[2/1] bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 p-4 flex flex-col justify-end space-y-2 animate-pulse">
+        <div class="h-4 w-1/2 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-800"></div>
+      </div>
+
+      <!-- Projects layouts -->
+      <div *ngIf="!isLoading()" class="space-y-4">
+        <div
+          *ngFor="let proj of trendingProjects()"
+          [style.backgroundImage]="'url(' + proj.bgImage + ')'"
+          class="w-full rounded-2xl aspect-[2/1] bg-cover bg-center border border-slate-100 dark:border-slate-800 relative overflow-hidden flex flex-col justify-end p-4.5 animate-screen-in"
+        >
+          <!-- Linear shadow gradient wrapper for outstanding high text readability -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/5 z-0"></div>
+
+          <!-- Project metadata text inside project grid layout -->
+          <div class="relative z-10 space-y-2">
+            
+            <div class="space-y-0.5">
+              <span class="px-2 py-0.5 rounded bg-brand-cyan/25 text-brand-cyan text-[8px] font-bold uppercase tracking-wider">OFFERED</span>
+              <h3 class="text-sm font-extrabold text-white tracking-tight pt-1 leading-snug">
+                {{ proj.title }}
+              </h3>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <!-- Budget indicator -->
+              <span class="text-[10px] font-extrabold text-brand-cyan">
+                Budget: {{ proj.budget }}
+              </span>
+
+              <!-- Overlapping participant avatars -->
+              <div class="flex -space-x-2.5">
+                <img
+                  *ngFor="let avatar of proj.avatars"
+                  [src]="avatar"
+                  class="h-5 w-5 rounded-full object-cover border border-slate-900"
+                  alt="Team User"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. RECOMMENDED FOR YOU SECTION -->
+    <div class="space-y-3.5 pb-6">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">Recommended for You</label>
+
+      <!-- SKELETON LOADER -->
+      <div *ngIf="isLoading()" class="flex gap-3.5 overflow-hidden">
+        <div *ngFor="let item of [1, 2]" class="w-36 shrink-0 aspect-square rounded-2xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 p-3 space-y-2 animate-pulse">
+          <div class="h-3/4 rounded bg-slate-200 dark:bg-slate-800 w-full"></div>
+          <div class="h-2 rounded bg-slate-200 dark:bg-slate-800 w-2/3"></div>
+        </div>
+      </div>
+
+      <!-- Horizontal scrollable recommended cards row -->
+      <div *ngIf="!isLoading()" class="flex gap-3.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div
+          *ngFor="let rec of recommendedItems()"
+          class="w-36 shrink-0 rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 flex flex-col justify-between shadow-sm relative group animate-screen-in"
+        >
+          <div class="aspect-[1.1/1] rounded-xl overflow-hidden mb-2">
+            <img
+              [src]="rec.imageUrl"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              [alt]="rec.title"
+            />
+          </div>
+
+          <div class="space-y-0.5">
+            <span class="text-[7.5px] font-extrabold text-brand-pink tracking-widest uppercase block">{{ rec.type }}</span>
+            <h4 class="text-[11px] font-extrabold text-slate-850 dark:text-white leading-none tracking-tight truncate">{{ rec.title }}</h4>
+            <p class="text-[8px] font-semibold text-slate-400 dark:text-slate-500 font-body leading-none truncate">{{ rec.subtitle }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

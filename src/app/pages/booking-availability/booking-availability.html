@@ -1,0 +1,160 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300 relative">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <div class="shrink-0 flex items-center justify-between pt-2">
+    <button
+      (click)="back()"
+      type="button"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+    >
+      <i class="pi pi-arrow-left text-xs"></i>
+    </button>
+
+    <h1 class="text-base font-extrabold text-slate-850 dark:text-white font-sans tracking-tight">Availability</h1>
+
+    <button
+      type="button"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+    >
+      <i class="pi pi-pencil text-xs"></i>
+    </button>
+  </div>
+
+  <!-- ================= PROFILE HEADER BANNER ================= -->
+  <div class="pt-5 shrink-0">
+    <div class="rounded-2xl border border-slate-150 dark:border-slate-800 p-4 bg-slate-50/40 dark:bg-slate-900/30 flex items-center gap-3.5 shadow-2xs">
+      <div class="relative shrink-0">
+        <img
+          [src]="talent()?.imageUrl || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150&h=150'"
+          class="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-xs"
+          alt="Avatar"
+        />
+        <span class="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-slate-50 dark:border-slate-800"></span>
+      </div>
+
+      <div class="flex flex-col space-y-1">
+        <h3 class="text-[13px] font-extrabold text-slate-850 dark:text-white leading-none tracking-tight">
+          {{ talent()?.name }}
+        </h3>
+        <span class="text-[8.5px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+          {{ talent()?.role }}
+        </span>
+        <span class="inline-flex max-w-max px-2 py-0.5 rounded-md bg-green-50 dark:bg-green-950/20 text-green-500 text-[7px] font-extrabold uppercase tracking-widest">
+          Available
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= OCTOBER 2023 CALENDAR ================= -->
+  <div class="pt-6 shrink-0 flex flex-col">
+    <!-- Month shifting row -->
+    <div class="flex items-center justify-between">
+      <h2 class="text-sm font-extrabold text-slate-850 dark:text-white font-sans tracking-tight">
+        {{ currentMonth() }}
+      </h2>
+      <div class="flex items-center gap-1.5">
+        <button type="button" class="h-6 w-6 rounded-lg bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 text-slate-500 flex items-center justify-center cursor-pointer active-tap">
+          <i class="pi pi-chevron-left text-[8px]"></i>
+        </button>
+        <button type="button" class="h-6 w-6 rounded-lg bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 text-slate-500 flex items-center justify-center cursor-pointer active-tap">
+          <i class="pi pi-chevron-right text-[8px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Days labels header -->
+    <div class="grid grid-cols-7 text-center pt-5 pb-2 text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+      <span>Mon</span>
+      <span>Tue</span>
+      <span>Wed</span>
+      <span>Thu</span>
+      <span>Fri</span>
+      <span>Sat</span>
+      <span>Sun</span>
+    </div>
+
+    <!-- Calendar days mapping -->
+    <div class="grid grid-cols-7 gap-y-2.5 justify-items-center text-center pt-2">
+      <!-- Empty placeholders for October 2023 starting on Sunday (so Saturday has empty cell too, actually Oct 1, 2023 was a Sunday, so 6 empty slots) -->
+      <span class="h-8 w-8"></span>
+      <span class="h-8 w-8"></span>
+      <span class="h-8 w-8"></span>
+      <span class="h-8 w-8"></span>
+      <span class="h-8 w-8"></span>
+      
+      <!-- Day 1 and 2 -->
+      <span class="h-8 w-8 flex items-center justify-center text-[10px] font-semibold text-slate-400 dark:text-slate-650">1</span>
+      <span class="h-8 w-8 flex items-center justify-center text-[10px] font-semibold text-slate-400 dark:text-slate-650">2</span>
+
+      <!-- Mapping remaining 3 to 31 days -->
+      <div
+        *ngFor="let day of availability().slice(2)"
+        (click)="selectDay(day)"
+        [class]="getDayClass(day)"
+      >
+        {{ day.day }}
+      </div>
+    </div>
+
+    <!-- Calendar Color Legends -->
+    <div class="flex items-center justify-center gap-5 pt-6 text-[8px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+      <div class="flex items-center gap-1.5">
+        <span class="h-2 w-2 rounded-full bg-green-500"></span> Available
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-700"></span> Booked
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="h-2 w-2 rounded-full bg-amber-400"></span> Pending
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SELECT TIME SLOTS ================= -->
+  <div class="pt-6 shrink-0 flex flex-col space-y-3.5">
+    <h3 class="text-xs font-extrabold text-slate-850 dark:text-white pl-0.5 leading-none">
+      Select Time (Oct {{ selectedDay() || 18 }})
+    </h3>
+
+    <div class="grid grid-cols-3 gap-2.5">
+      <button
+        *ngFor="let slot of timeSlots()"
+        (click)="selectSlot(slot)"
+        type="button"
+        [class]="selectedTimeSlot() === slot ?
+          'py-3 rounded-2xl bg-brand-purple/10 border-2 border-brand-purple text-brand-purple font-extrabold text-[10.5px] uppercase tracking-wider text-center cursor-pointer active-tap transition-all' :
+          'py-3 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-150 dark:border-slate-800 text-slate-650 dark:text-slate-350 font-bold text-[10.5px] uppercase tracking-wider text-center hover:bg-slate-100 transition-all cursor-pointer active-tap'"
+      >
+        {{ slot }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= BOOK NOW BOTTOM CTA ================= -->
+  <div class="flex-1 min-h-[30px]"></div>
+  <div class="shrink-0 pt-4 pb-6">
+    <button
+      (click)="bookNow()"
+      type="button"
+      class="w-full py-4 rounded-2xl bg-brand-cyan text-slate-800 font-extrabold text-[11px] uppercase tracking-wider shadow-lg shadow-brand-cyan/20 hover:scale-102 active:scale-98 transition-all cursor-pointer text-center active-tap"
+    >
+      Book Now
+    </button>
+  </div>
+
+  <!-- ================= DELIGHTFUL SUCCESS OVERLAY ================= -->
+  <div
+    *ngIf="showSuccessAnimation()"
+    class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 flex flex-col items-center justify-center p-6 z-50 animate-screen-in text-center"
+  >
+    <div class="h-20 w-20 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg shadow-green-500/25 mb-5 scale-in animate-pulse">
+      <i class="pi pi-check text-3xl"></i>
+    </div>
+    
+    <h2 class="text-base font-extrabold text-slate-850 dark:text-white leading-none tracking-tight">Booking Request Sent!</h2>
+    <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-2">Mock details saved inside secure database.</p>
+    <span class="text-[9px] font-bold text-brand-purple uppercase tracking-widest mt-6 animate-pulse block">Redirecting to chat feed...</span>
+  </div>
+
+</div>

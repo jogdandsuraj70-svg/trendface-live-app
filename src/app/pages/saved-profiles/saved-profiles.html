@@ -1,0 +1,81 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300 relative">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <div class="shrink-0 flex items-center justify-between pt-2">
+    <div class="flex items-center gap-3">
+      <button
+        (click)="back()"
+        type="button"
+        class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-750 dark:text-slate-350 cursor-pointer active-tap"
+      >
+        <i class="pi pi-arrow-left text-xs"></i>
+      </button>
+
+      <h1 class="text-base font-extrabold text-slate-850 dark:text-white font-sans tracking-tight">Saved Profiles</h1>
+    </div>
+  </div>
+
+  <!-- ================= SAVED PORTFOLIOS FEED ================= -->
+  <div class="flex-1 py-5 space-y-4">
+    <!-- Empty State -->
+    <div *ngIf="savedTalents().length === 0" class="flex flex-col items-center justify-center py-20 text-center space-y-3.5">
+      <div class="h-16 w-16 rounded-full bg-slate-50 dark:bg-slate-850 flex items-center justify-center text-slate-400">
+        <i class="pi pi-bookmark text-xl"></i>
+      </div>
+      <div>
+        <h4 class="text-xs font-extrabold text-slate-850 dark:text-white leading-none">No Saved Profiles</h4>
+        <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-2">Tap the bookmark icon on any Explore card to save portfolio roster details here.</p>
+      </div>
+      <button
+        (click)="back()"
+        type="button"
+        class="px-5 py-2.5 rounded-xl bg-brand-purple text-white font-extrabold text-[9.5px] uppercase tracking-wider shadow-sm shadow-brand-purple/10 active-tap cursor-pointer"
+      >
+        Explore Profiles
+      </button>
+    </div>
+
+    <!-- Active bookmarked Cards -->
+    <div
+      *ngFor="let talent of savedTalents()"
+      (click)="viewProfile(talent.id)"
+      class="rounded-3xl border border-slate-150 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 hover:border-brand-purple/20 shadow-xs relative flex flex-col gap-3 cursor-pointer animate-screen-in"
+    >
+      <div class="flex items-start justify-between min-w-0">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <img
+            [src]="talent.imageUrl"
+            class="h-12 w-12 rounded-xl object-cover shrink-0 shadow-2xs"
+            [alt]="talent.name"
+          />
+
+          <div class="flex flex-col space-y-0.5 min-w-0">
+            <h3 class="text-[11.5px] font-extrabold text-slate-850 dark:text-white leading-none tracking-tight truncate pr-1">
+              {{ talent.name }}
+            </h3>
+            <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+              {{ talent.role }}
+            </span>
+            <div class="flex items-center gap-1 text-[8px] font-semibold text-slate-400 dark:text-slate-500 pt-0.5">
+              <i class="pi pi-star-fill text-[7.5px] text-amber-400"></i>
+              <span class="font-bold text-slate-700 dark:text-slate-350">{{ talent.rating }}</span>
+              <span>•</span>
+              <span class="truncate">{{ talent.location }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remove bookmark button -->
+        <button
+          (click)="removeBookmark(talent.id, $event)"
+          type="button"
+          class="h-8 w-8 rounded-xl bg-brand-pink/5 hover:bg-brand-pink/10 text-brand-pink flex items-center justify-center transition-all cursor-pointer active-tap"
+          title="Remove Bookmark"
+        >
+          <i class="pi pi-trash text-[10.5px]"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

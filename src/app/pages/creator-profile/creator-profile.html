@@ -1,0 +1,137 @@
+<div class="h-full w-full bg-white dark:bg-slate-900 flex flex-col justify-between p-6 animate-screen-in select-none overflow-y-auto transition-colors duration-300">
+  
+  <!-- ================= TOP SECTION: HEADER BAR ================= -->
+  <div class="flex items-center justify-between pt-2">
+    <button
+      (click)="back()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer active-tap">
+      <i class="pi pi-arrow-left text-sm"></i>
+    </button>
+    <span class="text-md font-extrabold text-slate-850 dark:text-white font-sans tracking-wide">CREATOR PROFILE</span>
+    <button
+      (click)="triggerMenu()"
+      class="h-8 w-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer active-tap">
+      <i class="pi pi-ellipsis-v text-sm"></i>
+    </button>
+  </div>
+
+  <!-- ================= MID SECTION: CREATOR INFO ================= -->
+  <div class="py-5 space-y-5.5 flex-1 flex flex-col">
+    
+    <!-- Profile Header Info -->
+    <div class="flex flex-col items-center justify-center text-center space-y-3.5">
+      <!-- Profile Picture circular container with Verified overlay -->
+      <div class="relative">
+        <div class="h-23 w-23 rounded-full p-1 bg-gradient-to-tr from-brand-cyan via-brand-purple to-brand-pink animate-pulse">
+          <img
+            [src]="profileImage()"
+            class="h-full w-full rounded-full object-cover border-2 border-white dark:border-slate-900"
+            alt="Creator Avatar"
+          />
+        </div>
+        <!-- Cyan checked verified badge at bottom-right corner -->
+        <span class="absolute bottom-0 right-0 h-6 w-6 rounded-full bg-brand-cyan border border-white dark:border-slate-900 text-white flex items-center justify-center shadow-md">
+          <i class="pi pi-check text-[9px] font-bold"></i>
+        </span>
+      </div>
+
+      <!-- Names & Role details -->
+      <div class="space-y-1">
+        <h2 class="text-xl font-extrabold text-slate-850 dark:text-white tracking-tight font-sans">
+          {{ fullName() }}
+        </h2>
+        
+        <div class="flex items-center justify-center gap-1.5 text-[10.5px] font-bold font-sans">
+          <span class="text-brand-purple">@{{ username() }}</span>
+          <span class="text-brand-pink">•</span>
+          <span class="text-brand-pink tracking-widest uppercase text-[9.5px]">
+            {{ roleBadge() }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Stats Grid Card (POSTS, FOLLOWERS, FOLLOWING) -->
+    <div class="w-full py-4.5 rounded-2xl border border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm flex items-center justify-around">
+      <div class="flex flex-col items-center justify-center text-center">
+        <span class="text-sm font-extrabold text-brand-purple tracking-tight">{{ postsCount() }}</span>
+        <span class="text-[8.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5 font-sans">POSTS</span>
+      </div>
+
+      <div class="h-6 w-px bg-slate-100 dark:bg-slate-800"></div>
+
+      <div class="flex flex-col items-center justify-center text-center">
+        <span class="text-sm font-extrabold text-brand-purple tracking-tight">{{ followersCount() }}</span>
+        <span class="text-[8.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5 font-sans">FOLLOWERS</span>
+      </div>
+
+      <div class="h-6 w-px bg-slate-100 dark:bg-slate-800"></div>
+
+      <div class="flex flex-col items-center justify-center text-center">
+        <span class="text-sm font-extrabold text-brand-purple tracking-tight">{{ followingCount() }}</span>
+        <span class="text-[8.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5 font-sans">FOLLOWING</span>
+      </div>
+    </div>
+
+    <!-- Professional Bio Block Card -->
+    <div class="w-full p-4.5 rounded-2xl border border-slate-150 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/30 flex flex-col justify-between">
+      <p class="text-[11px] leading-relaxed text-slate-700 dark:text-slate-350 font-body font-medium pr-1">
+        {{ bio() }}
+      </p>
+
+      <!-- Pin Map marker location coordinates -->
+      <div class="flex items-center gap-1.5 mt-3 text-brand-purple">
+        <i class="pi pi-map-marker text-[10px]"></i>
+        <span class="text-[10px] font-extrabold tracking-wider uppercase font-sans">
+          {{ location() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Collaborate Full-width Cyan Call-to-action button -->
+    <button
+      (click)="collaborate()"
+      type="button"
+      class="w-full py-4.5 rounded-2xl bg-brand-cyan hover:bg-opacity-92 text-slate-800 font-extrabold text-sm tracking-wider shadow-lg shadow-brand-cyan/15 transition-all active-tap cursor-pointer flex items-center justify-center"
+    >
+      Collaborate
+    </button>
+
+    <!-- Core Disciplines Tag Chips Setup -->
+    <div class="space-y-3 pt-1">
+      <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans pl-0.5">CORE DISCIPLINES</label>
+      <div class="flex flex-wrap gap-2">
+        <span
+          *ngFor="let spec of specialties()"
+          class="px-4 py-2.5 rounded-full bg-brand-purple/10 text-brand-purple text-[10.5px] font-extrabold tracking-wide"
+        >
+          {{ spec }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Portfolio Grid display -->
+    <div class="space-y-3 pt-2">
+      <div class="flex justify-between items-center pl-0.5">
+        <label class="text-[9.5px] font-extrabold tracking-wider text-brand-purple uppercase font-sans">Portfolio</label>
+        <span class="text-slate-400"><i class="pi pi-th-large text-xs"></i></span>
+      </div>
+
+      <!-- Grid displaying uploads -->
+      <div class="grid grid-cols-2 gap-3.5 pt-1.5 pb-6">
+        <div
+          *ngFor="let img of portfolioImages()"
+          class="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-850/30 animate-screen-in"
+        >
+          <img
+            [src]="img"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            alt="Portfolio Artwork"
+          />
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
